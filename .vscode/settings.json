@@ -4,6 +4,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+  "editor.rulers": [100],
   "css.validate": false,
   "tailwindCSS.emmetCompletions": true,
   "vitest.enable": true
