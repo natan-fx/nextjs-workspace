@@ -9,7 +9,6 @@ const eslintConfig = defineConfig([
   prettier,
   {
     rules: {
-      // Elevando regras críticas de warn → error
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-has-content': 'error',
       'jsx-a11y/anchor-is-valid': 'error',
@@ -30,6 +29,18 @@ const eslintConfig = defineConfig([
       'jsx-a11y/role-has-required-aria-props': 'error',
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/tabindex-no-positive': 'error',
+
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-expressions': 'error',
+
+      'react/no-unused-prop-types': 'error',
+      'react/no-array-index-key': 'error',
+      'react-hooks/exhaustive-deps': 'error',
+
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'no-console': 'warn',
     },
   },
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),

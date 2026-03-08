@@ -255,7 +255,7 @@ const eslintConfig = defineConfig([
   prettier,
   {
     rules: {
-      // Elevando regras críticas de warn → error
+      // Acessibilidade — warn → error
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-has-content': 'error',
       'jsx-a11y/anchor-is-valid': 'error',
@@ -276,6 +276,21 @@ const eslintConfig = defineConfig([
       'jsx-a11y/role-has-required-aria-props': 'error',
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/tabindex-no-positive': 'error',
+
+      // TypeScript — boas práticas
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-expressions': 'error',
+
+      // React — boas práticas
+      'react/no-unused-prop-types': 'error',
+      'react/no-array-index-key': 'error',
+      'react-hooks/exhaustive-deps': 'error',
+
+      // JavaScript — boas práticas
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'no-console': 'warn',
     },
   },
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
@@ -286,7 +301,57 @@ export default eslintConfig;
 
 ---
 
-## 12. Instalação do Commitlint
+## 12. `tsconfig.json`
+
+Abra o `tsconfig.json` gerado e substitua tudo por:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
+```
+
+**O que cada flag extra faz:**
+
+| Flag                         | Comportamento                                                      |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `noUncheckedIndexedAccess`   | `array[0]` retorna `T \| undefined` — força checagem antes de usar |
+| `exactOptionalPropertyTypes` | `undefined` explícito é diferente de propriedade ausente           |
+| `noImplicitReturns`          | Toda função deve retornar em todos os caminhos de código           |
+| `noFallthroughCasesInSwitch` | Todo `case` precisa de `break`, `return` ou `throw`                |
+
+---
+
+## 13. Instalação do Commitlint
 
 ```bash
 npm install -D @commitlint/cli @commitlint/config-conventional
@@ -572,7 +637,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  ...(process.env.CI ? { workers: 1 } : {}),
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:3000',
@@ -633,6 +698,7 @@ Substitua o bloco `"scripts"` e adicione `"lint-staged"` antes da última `}`:
   "lint:ci": "eslint . --max-warnings=0",
   "format": "prettier --write .",
   "format:check": "prettier --check .",
+  "typecheck": "tsc --noEmit",
   "test": "vitest run --passWithNoTests",
   "test:watch": "vitest",
   "test:coverage": "vitest run --coverage --passWithNoTests",
@@ -672,6 +738,7 @@ Substitua o bloco `"scripts"` e adicione `"lint-staged"` antes da última `}`:
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+  "editor.rulers": [100],
   "css.validate": false,
   "tailwindCSS.emmetCompletions": true,
   "vitest.enable": true
@@ -835,7 +902,7 @@ Saída esperada: todos os arquivos já formatados.
 **4. Type check:**
 
 ```bash
-npx tsc --noEmit
+npm run typecheck
 ```
 
 Saída esperada: zero erros de tipo.
